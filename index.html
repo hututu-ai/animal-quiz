@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>挫折动物画像 · AI自测</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',sans-serif;background:#f0f4f8;min-height:100vh}
+.fade{animation:f .4s ease}
+@keyframes f{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.ob{transition:all .15s;cursor:pointer}
+.ob:active{transform:scale(.97)}
+.ob.s{background:#4F46E5!important;color:#fff!important;border-color:#4F46E5!important}
+.pb{transition:width .4s ease}
+.rc{border-radius:24px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.2)}
+.animal-img{width:180px;height:180px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,.3);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+</style>
+</head>
+<body>
+<div id="a" class="max-w-md mx-auto px-4 py-6 min-h-screen flex flex-col"></div>
+<script>
+var Q=[
+['面对复杂问题时，你认为结果主要取决于：','自己的方法和努力','努力、方法和外部条件的综合','更多看运气或他人态度','无论如何努力，结果都差不多'],
+['当事情发展不如预期，你的归因倾向是：','具体操作或时机问题，可以调整','多方面因素，需要综合分析','自己能力不够或准备不足','外界环境限制，个人无力改变'],
+['对于改变现状的可能性，你的信念是：','完全有可能','较有可能','不太可能','完全不可能'],
+['你经历挫折后的情绪恢复过程通常是：','短暂低落，很快找到新方向','需要一些时间，但能逐渐平复','持续焦虑，越想越乱','转为麻木，不再有情绪波动'],
+['压力情境中，你对自己情绪的察觉度：','清晰知道情绪状态和触发原因','大致了解，但细节模糊','情绪混乱，难以理清','回避感受，不愿深入体验'],
+['当感到无助时，你最先出现的念头是：','"我需要找到新的解决方法"','"也许需要休息一下再试试"','"怎么办，越想越着急"','"算了，就这样吧"'],
+['面对重复出现的问题，你的应对模式：','分析根本原因，寻求彻底解决','尝试不同方法，寻找最佳方案','用同样方法反复尝试，期待转机','避免面对，减少相关情境'],
+['需要他人帮助时，你的态度是：','主动寻找合适的帮助资源','会求助，但更倾向自己解决','想求助但担心被拒绝或评价','宁愿自己硬扛也不开口'],
+['在团队任务遇到困难时，你的角色：','主动承担责任并提出方案','配合团队，完成分配任务','焦虑等待，不知如何贡献','退缩回避，减少参与度'],
+['描述你近期的整体状态，最接近：','虽有挑战，但方向明确','平稳中有波动，总体可控','忙碌但迷茫，原地打转','被动承受，缺乏动力']
+];
+var R=[
+{n:'放弃刺猬',img:'images/hedgehog.jpg',r:'10-18分',bg:'linear-gradient(135deg,#5C4033,#1a1a2e)',s:'高无助型',
+t:'你像一只遇到危险就蜷缩起来的刺猬，用全身的尖刺筑起防护墙。长期的挫折经历让你形成了"提前放弃以避免更大伤害"的心理防御机制。',
+k:['控制感极低','情绪从焦虑转为麻木','提前放弃避免失望','稳定外归因'],
+v:'刺猬需要安全的环境才能舒展。建议从小而安全的情境开始，重新建立"行动→积极结果"的联结。专业心理咨询可以提供安全的支持环境。'},
+{n:'躺平龟',img:'images/turtle.jpg',r:'19-26分',bg:'linear-gradient(135deg,#2E8B57,#1a3a2a)',s:'回避退缩型',
+t:'你像一只遇到风浪就缩进壳里的乌龟，用被动等待作为主要应对策略。"躺平"不是懒惰，而是一种心理节能模式——既然改变不了，不如减少消耗。',
+k:['改变需要太多能量','无奈和倦怠','拖延和被动等待','低估自己的改变能力'],
+v:'乌龟需要温暖的阳光才能伸出头脚。建议设定"最小可行目标"（每天进步1%），寻找同伴支持，区分"真正的无能为力"和"习得性的无力感"。'},
+{n:'焦虑仓鼠',img:'images/hamster.jpg',r:'27-34分',bg:'linear-gradient(135deg,#D97706,#78350F)',s:'忙碌无效型',
+t:'你像转轮上的仓鼠，忙碌但缺乏方向感。无助感来自"努力的无效感"——明明很努力，却看不到实质性进展，形成"越焦虑越忙碌，越忙碌越焦虑"的循环。',
+k:['相信努力但方向混乱','焦虑和疲惫','重复忙碌策略不足','消极内归因'],
+v:'第一步是暂停。从转轮上下来：这个目标真的是我想要的吗？我的努力方式是否有效？尝试"少做但更聚焦"，区分"真正重要的事"和"只是紧急的事"。'},
+{n:'探索狐',img:'images/fox.jpg',r:'35-40分',bg:'linear-gradient(135deg,#7C3AED,#1E1B4B)',s:'灵活应对型',
+t:'你像森林中灵活的狐狸，拥有较强的环境适应能力。面对困难时，倾向于"分析情境→寻找资源→灵活调整"的策略模式，认知弹性高。',
+k:['控制感较强','情绪弹性好','策略灵活多样','归因方式健康'],
+v:'有时可能因过度分析而延迟行动，或追求"完美方案"而犹豫不决。建议适时行动，接受"足够好"的方案，并将经验系统化形成可复用的应对策略。'}
+];
+var ans=[],ci=-1,el=document.getElementById('a');
+function gr(sc){if(sc<=18)return R[0];if(sc<=26)return R[1];if(sc<=34)return R[2];return R[3];}
+function intro(){el.innerHTML=`<div class="fade flex-1 flex flex-col">
+<div class="text-center pt-8 pb-6">
+<div class="text-5xl mb-3">\ud83e\udd8a\ud83d\udc22\ud83d\udc39\ud83e\udd94</div>
+<h1 class="text-2xl font-bold text-gray-800 mb-1">挫折动物画像</h1>
+<p class="text-sm text-gray-400">30秒自测 · AI生成你的专属画像</p>
+</div>
+<div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-5 text-sm text-gray-600 leading-relaxed">
+<p class="mb-3">欢迎使用<b>"挫折动物画像"</b>AI生成器！</p>
+<p class="mb-3">在接下来的<b>10道题</b>中，AI将根据你的状态、态度和行动选择，为你生成专属的「挫折动物画像」。</p>
+<p>准备好开始这段有趣的自我探索之旅了吗？</p>
+</div>
+<div class="bg-gray-50 rounded-2xl p-4 mb-6 text-xs text-gray-400 leading-relaxed">
+<p class="font-medium text-gray-500 mb-2">\u2139\ufe0f 伦理声明</p>
+<p>1. 本问卷为教师自编的趣味性心理自评工具，不构成专业心理评估或诊断。</p>
+<p>2. 适用于心理健康教育、团体活动或自我探索场景。</p>
+<p>3. 结果仅供参考，可能受测试时情绪状态、环境因素等影响。</p>
+<p>4. 如有明显困扰或长期无助感，建议寻求专业心理咨询师帮助。</p>
+<p>5. 所有测试数据仅用于即时画像生成，不会被保存或分享。</p>
+</div>
+<button onclick="go()" class="w-full py-4 bg-indigo-600 text-white font-medium rounded-xl text-base shadow-lg shadow-indigo-200 active:scale-95 transition">我已阅读并理解声明，开始测试 \u2192</button>
+</div>`;}
+function go(){ans=[];ci=0;qq();}
+function qq(){var q=Q[ci],p=Math.round(ci/Q.length*100),lb=['A','B','C','D'],sc=[4,3,2,1];
+el.innerHTML=`<div class="fade flex-1 flex flex-col">
+<div class="mb-4">
+<div class="flex justify-between text-xs text-gray-400 mb-2"><span>第${ci+1}/${Q.length}题</span><span>${p}%</span></div>
+<div class="h-1.5 bg-gray-200 rounded-full overflow-hidden"><div class="pb h-full bg-indigo-500 rounded-full" style="width:${p}%"></div></div>
+</div>
+<h2 class="text-lg font-bold text-gray-800 mb-5 leading-relaxed">${q[0]}</h2>
+<div class="flex flex-col gap-3 flex-1">
+${[1,2,3,4].map(i=>`<button class="ob w-full text-left px-4 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-sm text-gray-700 leading-relaxed" onclick="sel(${sc[i-1]},this)"><span class="inline-block w-6 h-6 rounded-full bg-gray-100 text-center text-xs leading-6 font-medium text-gray-500 mr-2">${lb[i-1]}</span>${q[i]}</button>`).join('')}
+</div></div>`;}
+function sel(sc,btn){ans.push(sc);document.querySelectorAll('.ob').forEach(b=>{b.classList.add('pointer-events-none','opacity-60');});btn.classList.add('s');btn.classList.remove('opacity-60');setTimeout(()=>{ci++;ci>=Q.length?res():qq();},300);}
+function res(){var tot=ans.reduce((a,b)=>a+b,0),r=gr(tot);
+el.innerHTML=`<div class="fade flex-1 flex flex-col items-center">
+<p class="text-sm text-gray-400 mb-4">你的得分：${tot} 分</p>
+<div class="rc w-full text-white p-6 mb-6" style="background:${r.bg}">
+<div class="text-center mb-5">
+<img src="${r.img}" class="animal-img mx-auto mb-3" alt="${r.n}">
+<h2 class="text-2xl font-bold mb-1">${r.n}</h2>
+<p class="text-sm opacity-80">${r.s} · ${r.r}</p>
+</div>
+<div class="bg-white/10 backdrop-blur rounded-xl p-4 mb-4">
+<p class="text-sm leading-relaxed opacity-90">${r.t}</p>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+${r.k.map(x=>`<span class="text-xs bg-white/20 px-2.5 py-1 rounded-full">${x}</span>`).join('')}
+</div>
+<div class="border-t border-white/20 pt-4">
+<p class="text-xs font-medium opacity-70 mb-1">\ud83d\udca1 成长建议</p>
+<p class="text-sm leading-relaxed opacity-90">${r.v}</p>
+</div>
+<div class="text-center mt-4 pt-3 border-t border-white/20">
+<p class="text-xs opacity-50">挫折动物画像 · AI自测</p>
+</div>
+</div>
+<div class="flex gap-3 w-full">
+<button onclick="location.reload()" class="flex-1 py-3 bg-white border-2 border-gray-200 text-gray-600 font-medium rounded-xl text-sm active:scale-95 transition">\ud83d\udd04 重新测试</button>
+</div>
+<p class="text-xs text-gray-400 mt-4 text-center">长按卡片可截图保存，分享给朋友一起测试</p>
+</div>`;}
+intro();
+</script>
+</body>
+</html>
